@@ -2,9 +2,26 @@ package datafile
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strconv"
 )
+
+/*
+FileOpen Opens a provided file from the parameter provided.
+*/
+func FileOpen(filename string) (*os.File, error) {
+	fmt.Println("Opening...", filename)
+	return os.Open(filename)
+}
+
+/*
+FileClose Closes a file once read.
+*/
+func FileClose(file *os.File) {
+	fmt.Println("Closing...")
+	file.Close()
+}
 
 /*
 GetFloats Reads a string from a line of a file and converts it to a float64.
@@ -12,7 +29,7 @@ GetFloats Reads a string from a line of a file and converts it to a float64.
 func GetFloats(filename string) ([]float64, error) { // return a slice not an array
 	var numbers []float64 // nil by default, append treats nil like empty
 
-	file, err := os.Open(filename) // open the provided filename
+	file, err := FileOpen(filename) // open the provided filename
 	if err != nil {
 		return nil, err
 	}
@@ -26,10 +43,7 @@ func GetFloats(filename string) ([]float64, error) { // return a slice not an ar
 		numbers = append(numbers, number)
 	}
 
-	err = file.Close() // close for resources
-	if err != nil {
-		return nil, err // if there was an error closing it, report it
-	}
+	FileClose(file)
 
 	if scanner.Err() != nil { // error during a scan?
 		return nil, scanner.Err() // return nil instead of the slice.
